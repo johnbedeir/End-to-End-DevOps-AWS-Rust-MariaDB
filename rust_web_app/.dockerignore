@@ -1,0 +1,8 @@
+.history
+.gitignore
+Dockerfile
+target/
+*.sql
+*.yml
+*.md
+*.lock
