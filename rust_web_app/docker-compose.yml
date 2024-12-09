@@ -1,0 +1,36 @@
+version: "3.9"
+
+services:
+  rust-web-app:
+    build:
+      context: .
+      dockerfile: Dockerfile
+    ports:
+      - "5000:5000"
+    environment:
+      DATABASE_URL: "mysql://${DATABASE_USER}:${DATABASE_PASSWORD}@${DATABASE_HOST}:${DATABASE_PORT}/${DATABASE_NAME}"
+    depends_on:
+      - mariadb
+    networks:
+      - rust-mariadb-app-network
+
+  mariadb:
+    image: mariadb:latest
+    container_name: mariadb
+    restart: always
+    environment:
+      MYSQL_ROOT_PASSWORD: "${DATABASE_PASSWORD}"
+      MYSQL_DATABASE: "${DATABASE_NAME}"
+    ports:
+      - "3306:3306"
+    networks:
+      - rust-mariadb-app-network
+    volumes:
+      - mariadb_data:/var/lib/mysql
+      - ./init.sql:/docker-entrypoint-initdb.d/init.sql:ro
+
+networks:
+  rust-mariadb-app-network:
+
+volumes:
+  mariadb_data:
